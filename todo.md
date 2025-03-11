@@ -1,0 +1,3 @@
+-  Note mistakes:
+    - Homogeneity Thm part 0 image is not convex...
+    - Homogeneity thm part 1 & 2 heading replace d with r
