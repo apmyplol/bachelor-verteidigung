@@ -1,0 +1,61 @@
+% basics:
+% Metric symbol, open & closed balls, metric shortcut
+\DeclareMathOperator{\metric}{\delta}
+\newcommand\ball[2][\metric]{\operatorname{B}^{#1}_{(#2)}}
+\newcommand\ballp[3][\metric]{\operatorname{B}^{#1}_{#2} \left( #3 \right)}
+
+\newcommand\cball[2][\metric]{\operatorname{B}^{#1}_{[#2]}}
+\newcommand\cballp[3][\metric]{\operatorname{B}^{#1}_{#2} \left[ #3 \right]}
+
+\newcommand\metr[3][]{\metric_{#1} \left( #2, #3 \right)}
+\newcommand\metro[1]{\metric \left( #1 \right)}
+
+
+
+% --- vector
+\newcommand\ve[1]{\mathbf{#1}}
+% --- element aus proximit structure
+\newcommand\ps[1]{\mathcal{#1}}
+
+% ------------------------------- 3 - 1 seg add metrics -------------------
+
+% curve, Length & sublength of curve
+\DeclareMathOperator{\curve}{\gamma}
+\newcommand\len[1][\curve]{\operatorname{L}(#1)}
+\NewDocumentCommand{\sublen}{ O{x} O{\curve}}{\operatorname{L}_{a}^{#1}(#2)}
+
+% shortcuts for the main lemma and its proof
+% Part a) >=
+
+\NewDocumentCommand{\z}{o}{%
+  \ve{z\IfValueTF{#1}{^{(#1)}}{}}%
+}
+% \newcommand\z[1][]{\ve{z^{(#1)}}}
+
+% Part b) <=
+
+\newcommand\y[1][k]{\ve{y^{(#1)}}}
+\newcommand\x[1][k]{\ve{x^{(#1)}}}
+
+\newcommand\w[1][i]{\ve{w^{(#1)}}}
+
+% convex Hull, extreme Points
+\DeclareMathOperator{\co}{conv}
+\DeclareMathOperator{\extr}{extreme}
+% \newcommand\cl[1]{\overline{#1}}
+
+
+% ---- Lemma
+% convexity of spheres
+\newcommand\dis{r}
+% \newcommand\C[1][\alpha]{\operatorname{C}(#1)}
+\newcommand\CO[1][\dis]{\operatorname{C} \left[ #1 \right]}
+\newcommand\E[1][\dis]{\operatorname{E}\left( #1\right )}
+
+
+
+\newcommand\mean[2][\phi]{\mathcal{M}_{#1}(#2,\ve{w})}
+\newcommand\meanp[2][p]{\mathcal{M}_{#1}(#2, \ve{w})}
+
+\newcommand\meanempty{\mathcal{M}_{\phi}}
+\newcommand\meanpempty{\mathcal{M}_{p}}

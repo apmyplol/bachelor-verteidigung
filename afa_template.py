@@ -12,7 +12,13 @@ from ..text_and_organisation import *
 bg_color = "#F5ECFE"
 
 # Font color and text size for any text and MathTex
-tex_temp = TexFontTemplates.new_century_schoolbook
+tex_temp = TexTemplate()
+tex_temp.add_to_preamble(
+    r"""
+    \input{afa_template.tex}
+    """
+)
+
 t_size = 30
 t_color = "#011638"
 
@@ -44,8 +50,10 @@ config.background_color = bg_color
 # Definition of Tex defaults. This will change font and its color.
 # Carefull! It seems that there exist some FontTemplates which do not automatically scale the parenthesis. This drove me crazy for some hours. Be aware of what font you choose.
 
-Tex.set_default(tex_template=tex_temp)
-MathTex.set_default(tex_template=tex_temp)
+
+Tex.set_default(tex_template=tex_temp, color=BLACK)
+MathTex.set_default(tex_template=tex_temp, color=BLACK)
+Text.set_default(color=BLACK)
 
 # Titles #Note that the corner_rad can be negative!
 # It seems that back_frame fits good both with box in text and nothing as decorator.

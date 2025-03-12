@@ -1,0 +1,54 @@
+\newtheoremstyle{mytheoremstyle} % name
+    {\topsep}                    % Space above
+    {\topsep}                    % Space below
+    {\itshape}                   % Body font
+    {}                           % Indent amount
+    {\bfseries}                  % Theorem head font
+    {.}                          % Punctuation after theorem head
+    {\newline}                   % Space after theorem head
+    {}  % Theorem head spec (can be left empty, meaning ‘normal’)
+
+\theoremstyle{mytheoremstyle}
+
+% \makeatletter
+% \def\thmhead#1#2#3{%
+%   \thmname{#1}\thmnumber{ #2}\thmnote{ (#3)}% 
+%   \newline
+% }
+% \makeatother
+% \renewcommand{\@thmheadpunct}{}
+
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem*{thm*}{Theorem}
+\newtheorem*{lem*}{Lemma}
+\newtheorem{cor}[thm]{Corollary}
+
+\newtheoremstyle{mytheoremstyle2} % name
+    {\topsep}                    % Space above
+    {\topsep}                    % Space below
+    {}                           % Body font
+    {}                           % Indent amount
+    {\bfseries}                  % Theorem head font
+    {.}                          % Punctuation after theorem head
+    {\newline}                   % Space after theorem head
+    {}  % Theorem head spec (can be left empty, meaning ‘normal’)
+
+\theoremstyle{mytheoremstyle2}
+
+\newtheorem{defi}[thm]{Definition}
+\newtheorem{ax}[thm]{Axiom}
+\newtheorem{ex}[thm]{Example}
+
+\newtheorem{proofpart}{Part}
+\makeatletter
+\@addtoreset{proofpart}{thm}
+\makeatother
+
+\newtheorem{proofpp}{Subpart}[proofpart]
+
+
+
+\theoremstyle{remark}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem*{rem*}{Remark}
