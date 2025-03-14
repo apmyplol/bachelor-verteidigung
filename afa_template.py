@@ -51,15 +51,15 @@ config.background_color = bg_color
 # Carefull! It seems that there exist some FontTemplates which do not automatically scale the parenthesis. This drove me crazy for some hours. Be aware of what font you choose.
 
 
-Tex.set_default(tex_template=tex_temp, color=BLACK)
-MathTex.set_default(tex_template=tex_temp, color=BLACK)
+Tex.set_default(tex_template=tex_temp, color=BLACK, font_size=30)
+MathTex.set_default(tex_template=tex_temp, color=BLACK, font_size=30)
 Text.set_default(color=BLACK)
 
 # Titles #Note that the corner_rad can be negative!
 # It seems that back_frame fits good both with box in text and nothing as decorator.
 
 Title_General.set_default(  # Be careful with general size and observe that title_sections are defined to UL corner by default.
-    text_size=t_size,
+    text_size=t_size+5,
     text_color=t_color,
     decorator_presence=d_presence_1,
     decorator_color=d_color,
