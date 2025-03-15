@@ -1,7 +1,7 @@
-from ..my_imports import *
-from ..objects import *
-from ..tables_and_plots import *
-from ..text_and_organisation import *
+from beanim.my_imports import *
+from beanim.objects import *
+from beanim.tables_and_plots import *
+from beanim.text_and_organisation import *
 
 # Here you can modify almost all parameters of objects used in these libraries. In this way you can generate new homogenous templates for your presentations.
 # First you have all the variables. You can find each of the classes attributes these variables modify down in the file.
@@ -39,8 +39,8 @@ s_opa = 0.8  # Stroke opacity of the border
 dot_size = 2  # How big the bullet points are
 
 # Color homogenisation
-h_1 = "#742F46"
-h_2 = "#9F4160"
+h_1 = GREEN
+h_2 = PURPLE
 h_3 = "#45386B"
 b_color = "#742F46"
 v_color = "#45386B"
@@ -69,6 +69,26 @@ Title_General.set_default(  # Be careful with general size and observe that titl
     fill_opa=f_opa,
     tightness=tight,
     stroke_opa=s_opa,
+)
+
+Dot.set_default(
+    color=d_color
+)
+
+Line.set_default(
+    color=BLACK
+)
+
+Circle.set_default(
+    color=BLACK
+)
+
+Square.set_default(
+    color=BLACK
+)
+
+Brace.set_default(
+    color=BLACK
 )
 
 # Bulleted Box and References recommended to mirror if two different boxes are displayed close to each other
@@ -142,20 +162,9 @@ Brane_General.set_default(  # Any brane appearing in objects
     brane_color=h_1, brane_fill_opa=0.1, brane_text_color=t_color, brane_stroke_w=2
 )
 
-Vacuum_General.set_default(  # Any vacuum appearing in objects
-    vacuum_color=h_3,
-    vacuum_fill_opa=f_opa,
-    vacuum_stroke_w=d_s_w,
-    direction_corner_rad=c_rad_dir_boxes,
-    corner_rad=c_rad,
-    vacuum_text_color=t_color,
-)
 
 AdS_Jc.set_default(arrow_color=h_1)
 
-
-# Black hole
-Black_Hole.set_default(bh_size=1, bh_color=t_color, bh_fill_opa=0.7)
 
 # Random Photo Frame
 Photo.set_default(
@@ -170,5 +179,3 @@ Photo.set_default(
 
 # Post-it
 Post_It.set_default(text_color=t_color, text_size=t_size, pin_color=h_2)
-
-####################################################

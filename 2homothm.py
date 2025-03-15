@@ -3,55 +3,19 @@ from manim.opengl import *
 from beanim import *
 from manim_slides import Slide
 from numpy import size
+from afa_functions import *
 
 config.write_to_movie = True
 # config.renderer = "opengl"
 
-import_template("afa_template")
-
-cite_temp = TexTemplate(tex_compiler="latexmk")
-cite_temp.add_to_preamble(
-    r"""
-    \usepackage[style=apa, backend=biber]{biblatex}
-    \addbibresource{refs.bib}
-    """
-)
-d_color = "#531196"
-
-Dot.set_default(
-    color=d_color
-)
-Line.set_default(
-    color=BLACK
-)
-Circle.set_default(
-    color=BLACK
-)
-Square.set_default(
-    color=BLACK
-)
-
-Brace.set_default(
-    color=BLACK
-)
-
-def update_list(group, self, currind, color_update=GREY):
-        self.play(group[currind].animate.set_color(color_update), group[currind+1].animate.set_color(BLACK))
-
-
-#TODO: defaults, update list, create top und so auslagern
-
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
 #:'<,'>yank t | call system('kitten @ send-text --match "title:ipythonn" --stdin', @t)
-class Cite(Tex):
-    def __init__(self, *args, font_size=10, **kwargs) -> None:
-        super().__init__(*args, tex_template=cite_temp, font_size=font_size, **kwargs)
 
 class Homogeneity(Scene):
     def construct(self):
-        self.next_section(skip_animations=True)
-        self.initTop()
+        # self.next_section(skip_animations=True)
+        initTop(self, "Homogeneity Theorem")
 
         int_subtr = Tex("intradimenional subtractivity: ").shift(LEFT)
         self.add(int_subtr)
@@ -132,7 +96,7 @@ class Homogeneity(Scene):
         self.play(Write(predot), cir.animate.scale(0.8))
 
         ### Proof part 1
-        update_list(steps, self, 0, GREEN)
+        update_list(steps, self, 0, h_1)
 
         ldots = VGroup([Dot(lineOZ.point_from_proportion(i), color=GREY) for i in np.arange(0.1, 1, 0.1)])
         self.add(ldots[0])
@@ -152,7 +116,7 @@ class Homogeneity(Scene):
 
         #
         # ### Proof part 2
-        update_list(steps, self, 1, GREEN)
+        update_list(steps, self, 1, h_1)
         
         self.play(Write(curve_svg[5]))
         cdots = VGroup([Dot(curve_svg[5].point_from_proportion(i)) for i in np.arange(0.1, 1, 0.1)])
@@ -160,31 +124,31 @@ class Homogeneity(Scene):
         self.play(Write(cdots))
 
 
-        vecs = VGroup(Arrow(start=p0, end=cdots[0], color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3),
-                      [Arrow(start=cdots[i], end=cdots[i+1], color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3) for i in range(0, len(cdots)-1)],
-                      Arrow(start=cdots[-1], end=p1, color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
+        vecs = VGroup(Arrow(start=p0, end=cdots[0], color=h_2, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3),
+                      [Arrow(start=cdots[i], end=cdots[i+1], color=h_2, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3) for i in range(0, len(cdots)-1)],
+                      Arrow(start=cdots[-1], end=p1, color=h_2, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
                       )
 
         self.play(Write(vecs), run_time=0.7)
 
-        scaled_vecs = vecs.copy().scale(0.1, about_point=p0.get_center()).set_color(GREEN)
+        scaled_vecs = vecs.copy().scale(0.1, about_point=p0.get_center()).set_color(h_1)
         self.play(ReplacementTransform(vecs.copy(), scaled_vecs))
 
-        sca_vec = Arrow(start=p0, end=predot.get_center(), color=GREEN, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
+        sca_vec = Arrow(start=p0, end=predot.get_center(), color=h_1, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
 
         self.play(ReplacementTransform(scaled_vecs, sca_vec))
 
-        self.play(cir.animate.set_color(GREEN))
+        self.play(cir.animate.set_color(h_1))
 
         eq1 = MathTex(r"= \sum_{i=1}^{m} \frac 1m")
-        ga = Arrow(start=ORIGIN, end=UR, color=GREEN, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, LEFT*0.5)
-        ba = Arrow(start=ORIGIN, end=UR, color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, RIGHT*0.5)
+        ga = Arrow(start=ORIGIN, end=UR, color=h_1, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, LEFT*0.5)
+        ba = Arrow(start=ORIGIN, end=UR, color=h_2, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, RIGHT*0.5)
 
         konv_komb = VGroup(eq1, ga, ba).next_to(self.top, DOWN*0.5)
 
         ga2 = ga.copy()
         tex_in = MathTex(r"\in").next_to(ga2, RIGHT*0.5)
-        gc = Circle(color=GREEN).scale(0.1).next_to(tex_in, RIGHT*0.5)
+        gc = Circle(color=h_1).scale(0.1).next_to(tex_in, RIGHT*0.5)
         tex_conv = Tex(r" if $\metric$ balls are convex").next_to(gc, RIGHT*0.5)
         konv_ball = VGroup(ga2, tex_in, gc, tex_conv).next_to(konv_komb, DOWN)
 
@@ -199,7 +163,7 @@ class Homogeneity(Scene):
         self.next_section(skip_animations=False)
 
         # ### Proof part 3
-        update_list(steps, self, 2, GREEN)
+        update_list(steps, self, 2, h_1)
 
         br1 = BraceLabel(VGroup(p0, ldots[0]),r"=\frac 1m \metro{z}",brace_direction=UP, font_size=20)
         self.play(Write(br1), Write(ldots[0]))
@@ -218,10 +182,10 @@ class Homogeneity(Scene):
         self.play(Write(br3))
         self.play(Write(br4))
 
-        self.play(FadeOut(br3), br2.animate.set_color(GREEN), br4.animate.set_color(GREEN))
+        self.play(FadeOut(br3), br2.animate.set_color(h_1), br4.animate.set_color(h_1))
 
         # ### Proof part 4
-        update_list(steps, self, 3, GREEN)
+        update_list(steps, self, 3, h_1)
 
         self.play(FadeOut(VGroup(br2, br4, set_svg, ldots, lineOZd, p0, p1)))
 
@@ -235,16 +199,6 @@ class Homogeneity(Scene):
         self.play(Write(approx2))
         self.play(Write(approx3))
         # ### Proof finished
-        self.play(steps[4].animate.set_color(GREEN))
+        self.play(steps[4].animate.set_color(h_1))
 
-
-    def initTop(self):
-        tit = Title_Section("Homogeneity Theorem", color=PURPLE).shift(DOWN*0.4)
-        ind_stat = Tex("Repr. Measurement \\&\\\\Similarity", font_size = 20, color=GREY).next_to(tit, 0.5*UP).to_edge(LEFT)
-        ind_pr = Tex("Unique Repr.\\\\Theorem", font_size = 20, color=GREY).next_to(ind_stat, RIGHT*2)
-
-        ind_hthm = Tex("Homogeneity\\\\Theorem", font_size = 20, color=GREY).next_to(ind_pr, RIGHT*2) 
-        ind_disc = Tex("Discussion", font_size=20, color=GREY).next_to(ind_hthm, RIGHT*2)
-        top = VGroup(tit, ind_stat, ind_pr, ind_hthm, ind_disc)
-        self.add(top)
-        self.top = top
+        # self.play(FadeOut(VGroup(approx, approx2)))
