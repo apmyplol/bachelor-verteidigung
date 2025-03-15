@@ -2,27 +2,17 @@ from manim import *
 from manim.opengl import *
 from beanim import *
 from manim_slides import Slide
+from afa_functions import *
+
+
 
 config.write_to_movie = False
 # config.renderer = "opengl"
 
-import_template("afa_template")
-#TODO: create tex template for citation that uses latexmk and everythign else with default latex
-
-cite_temp = TexTemplate(tex_compiler="latexmk")
-cite_temp.add_to_preamble(
-    r"""
-    \usepackage[style=apa, backend=biber]{biblatex}
-    \addbibresource{refs.bib}
-    """
-)
-
-class Cite(Tex):
-    def __init__(self, *args, font_size=10, **kwargs) -> None:
-        super().__init__(*args, tex_template=cite_temp, font_size=font_size, **kwargs)
 
 
-class Title_Slide(Scene):
+
+class Intro(Slide):
     def construct(self):
         # self.next_section(skip_animations=True)
         title = Title_Presentation(title= "Representational Measurement of Similarity: The Additive-Difference Model, Revisited",
@@ -30,22 +20,22 @@ class Title_Slide(Scene):
                                     author= "Arthur Liske")
         self.add(title)
 
-        # ref1= Ref(the_dictionary="./refs.txt", the_ref="tv").to_corner(UR)
-        # ref1 = MathTex(r"(\ps{a}, \ps{b}) \succsim (\ps{c}, \ps{d})")
-        # self.play(Write(ref1))
-        # ref2 = Cite(r"\parencite{mulholland}").next_to(ref1, DOWN)
-        # self.play(Write(ref2))
-        # ref3 = MathTex(r"\cball{\len}").next_to(ref2, DOWN)
-        # self.add(ref3)
-        # emo_test = Text("Hello 😊🚀", font="Twitter Color Emoji").next_to(ref3, 2*DOWN)
-        # self.play(Write(emo_test))
-        # self.play(title.text_group[0].animate.set_color(PURPLE))
-        # self.embed()
-        # ref1 = Ref(
-        #     the_dictionary="example_refeq/dictionaries/test_ref.txt", the_ref="RS1"
-        # ).to_corner(UR)
+        points = BulletedList(r"Representational Measurement",
+                 r"Representation of Similarity",
+                 r"Unique Representation Theorem",
+                 r"Homogeneity Theorem",
+                 r"Discussion",
+                buff=MED_SMALL_BUFF)
+
+        self.wipe(title, points)
+        
+        initTop(self, "Representaional Measurement")
+
+        self.play(Transform(points, self.top[0:5]))
 
 
-        # self.next_section(skip_animations=False)
 
+class test(Scene):
+    def construct(self):
 
+        self.embed()
