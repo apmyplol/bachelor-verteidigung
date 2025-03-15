@@ -2,12 +2,12 @@ from manim import *
 from manim.opengl import *
 from beanim import *
 from manim_slides import Slide
+from numpy import size
 
 config.write_to_movie = True
 # config.renderer = "opengl"
 
 import_template("afa_template")
-#TODO: create tex template for citation that uses latexmk and everythign else with default latex
 
 cite_temp = TexTemplate(tex_compiler="latexmk")
 cite_temp.add_to_preamble(
@@ -18,9 +18,28 @@ cite_temp.add_to_preamble(
 )
 d_color = "#531196"
 
+Dot.set_default(
+    color=d_color
+)
+Line.set_default(
+    color=BLACK
+)
+Circle.set_default(
+    color=BLACK
+)
+Square.set_default(
+    color=BLACK
+)
+
+Brace.set_default(
+    color=BLACK
+)
+
 def update_list(group, self, currind, color_update=GREY):
         self.play(group[currind].animate.set_color(color_update), group[currind+1].animate.set_color(BLACK))
 
+
+#TODO: defaults, update list, create top und so auslagern
 
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
@@ -73,49 +92,156 @@ class Homogeneity(Scene):
         steps = BulletedList(r"$\metric$ distance to set", 
                      r"$\frac 1m \metro{\ve{z}} \leq \metro{\frac 1m \ve{z}}$",
                      r"$\frac 1m \metro{\ve{z}} \geq \metro{\frac 1m \ve{z}}$",
-                     r"$\frac km \metro{\ve{z}} \geq \metro{\frac km \ve{z}}$",
-                     r"$\metric$ continuous"
-                     , font_size=30, buff=MED_SMALL_BUFF)
+                     r"$\frac km \metro{\ve{z}} = \metro{\frac km \ve{z}}$",
+                     r"$t \metro{\ve{z}} = \metro{t \ve{z}}$",
+                     font_size=30, buff=MED_SMALL_BUFF)
 
         self.play(Write(steps))
         self.play(steps.animate.scale(0.7).next_to(self.top, DOWN).to_edge(LEFT).set_color(GREY))
         self.play(steps[0].animate.set_color(BLACK))
-        self.next_section(skip_animations=False)
 
         ### Proof part 0 
-        set_svg = SVGMobject("./images/2_homothm0.svg", use_svg_cache=False).scale(2).shift(DR)
-        curve_svg = SVGMobject("./images/2_homothm_curve.svg", use_svg_cache=False)
+        set_svg = SVGMobject("./images/2_homothm0.svg", use_svg_cache=False).scale(2.1).shift(DR + DOWN*0.8)
+        curve_svg = SVGMobject("./images/2_homothm_curve.svg", use_svg_cache=False).scale(0.8).shift(DR+LEFT*0.5+DOWN*0.8)
         # 0 : z
         # 1-4: points
         # 5: curve
         # curve_svg[0]
-        self.play(Write(set_svg), Write(curve_svg))
+        p0 = LabeledDot(MathTex(r"\ve{0}", font_size=18, color=WHITE)).move_to(curve_svg[1])
+        p1 = LabeledDot(MathTex(r"\ve{z}", font_size=18, color=WHITE)).move_to(curve_svg[0])
+        lineOZ = Line(p0.get_center(), p1.get_center(), stroke_width=2)
+        self.play(Write(set_svg), Write(lineOZ), Write(p0), Write(p1))
 
-        # self.play(set_svg.animate.set_color(PURPLE))
+
+
+        
+        sq = Square(side_length=1.9).move_to(curve_svg[1])
+        #ANIM: point along line until proportion 0.1
+        self.play(Write(sq))
+
+        #NOTE: prove that this is possible
+        cir = Circle(color=GREY).surround(sq, buffer_factor=0.68)
+        self.add(cir)
+
+        #NOTE: try to measure in delta
+        self.play(FadeOut(sq))
+        
+        #ANIM: point along line until proportion 0.1
+        prop = 0.1
+        predot = Dot(lineOZ.point_from_proportion(prop), color=GREY)
+        self.play(Write(predot), cir.animate.scale(0.8))
 
         ### Proof part 1
-        # update_list(steps, self, 0, GREEN)
-        #
+        update_list(steps, self, 0, GREEN)
+
+        ldots = VGroup([Dot(lineOZ.point_from_proportion(i), color=GREY) for i in np.arange(0.1, 1, 0.1)])
+        self.add(ldots[0])
+        self.remove(predot)
+
+
+        self.play(Write(ldots[1]))
+        self.play(Write(ldots[2:]))
+
+        tr_ineq = MathTex(r"\metro{\ve{z}} \leq m\metro{\frac 1m \ve{z}}").next_to(lineOZ, UP)
+        self.play(Write(tr_ineq))
+
+
+        lineOZd = DashedLine(curve_svg[1], curve_svg[0], stroke_width=2)
+        self.play(FadeOut(VGroup(tr_ineq, ldots)), ReplacementTransform(lineOZ, lineOZd))
+
+
         #
         # ### Proof part 2
-        # update_list(steps, self, 1, GREEN)
-        #
+        update_list(steps, self, 1, GREEN)
+        
+        self.play(Write(curve_svg[5]))
+        cdots = VGroup([Dot(curve_svg[5].point_from_proportion(i)) for i in np.arange(0.1, 1, 0.1)])
+
+        self.play(Write(cdots))
+
+
+        vecs = VGroup(Arrow(start=p0, end=cdots[0], color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3),
+                      [Arrow(start=cdots[i], end=cdots[i+1], color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3) for i in range(0, len(cdots)-1)],
+                      Arrow(start=cdots[-1], end=p1, color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
+                      )
+
+        self.play(Write(vecs), run_time=0.7)
+
+        scaled_vecs = vecs.copy().scale(0.1, about_point=p0.get_center()).set_color(GREEN)
+        self.play(ReplacementTransform(vecs.copy(), scaled_vecs))
+
+        sca_vec = Arrow(start=p0, end=predot.get_center(), color=GREEN, buff=0, max_tip_length_to_length_ratio=0.2, stroke_width=3)
+
+        self.play(ReplacementTransform(scaled_vecs, sca_vec))
+
+        self.play(cir.animate.set_color(GREEN))
+
+        eq1 = MathTex(r"= \sum_{i=1}^{m} \frac 1m")
+        ga = Arrow(start=ORIGIN, end=UR, color=GREEN, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, LEFT*0.5)
+        ba = Arrow(start=ORIGIN, end=UR, color=PURPLE, buff=0, max_tip_length_to_length_ratio=0.1, stroke_width=3).scale(0.2).next_to(eq1, RIGHT*0.5)
+
+        konv_komb = VGroup(eq1, ga, ba).next_to(self.top, DOWN*0.5)
+
+        ga2 = ga.copy()
+        tex_in = MathTex(r"\in").next_to(ga2, RIGHT*0.5)
+        gc = Circle(color=GREEN).scale(0.1).next_to(tex_in, RIGHT*0.5)
+        tex_conv = Tex(r" if $\metric$ balls are convex").next_to(gc, RIGHT*0.5)
+        konv_ball = VGroup(ga2, tex_in, gc, tex_conv).next_to(konv_komb, DOWN)
+
+
+        self.play(Write(konv_komb))
+
+        self.play(Write(konv_ball))
+
+        
+        self.play(FadeOut(VGroup(konv_komb, konv_ball, sca_vec, vecs, cdots, cir, curve_svg[5])))
+
+        self.next_section(skip_animations=False)
+
         # ### Proof part 3
-        # update_list(steps, self, 2, GREEN)
-        #
-        #
+        update_list(steps, self, 2, GREEN)
+
+        br1 = BraceLabel(VGroup(p0, ldots[0]),r"=\frac 1m \metro{z}",brace_direction=UP, font_size=20)
+        self.play(Write(br1), Write(ldots[0]))
+
+        self.play(Write(ldots[1].set_color(BLACK)), Write(ldots[2:]))
+
+        br2 = BraceLabel(VGroup(p0, ldots[1]),r"\leq \frac 2m \metro{z}", brace_direction=UP,  font_size=20)
+
+
+        #TODO: braces intersect fix, , brace_config={"sharpness":0.1} doesnt work I think
+        br3 = BraceLabel(VGroup(ldots[1], p1), r"\leq \frac{m-2}{m} \metro{z}", font_size=20)
+        br4 = BraceLabel(VGroup(p0, ldots[1]), r"\geq \frac 2m \metro{z}", font_size=20)
+
+        self.play(ReplacementTransform(br1, br2))
+
+        self.play(Write(br3))
+        self.play(Write(br4))
+
+        self.play(FadeOut(br3), br2.animate.set_color(GREEN), br4.animate.set_color(GREEN))
+
         # ### Proof part 4
-        # update_list(steps, self, 3, GREEN)
-        #
-        #
+        update_list(steps, self, 3, GREEN)
+
+        self.play(FadeOut(VGroup(br2, br4, set_svg, ldots, lineOZd, p0, p1)))
+
+
+        
+        approx = Tex(r"$\metro{\frac km \ve{z}} = \frac km \metro{\ve{z}}$ for arbitrary large $k$ and $m$").shift(UP)
+        approx2 = Tex(r"$\metric$ continuous").next_to(approx, DOWN)
+        approx3 = Tex(r"$t \in \mathbb{R}$ as limit of rational numbers").next_to(approx2, DOWN)
+
+        self.play(Write(approx))
+        self.play(Write(approx2))
+        self.play(Write(approx3))
         # ### Proof finished
-        # self.play(steps[4].animate.set_color(GREEN))
+        self.play(steps[4].animate.set_color(GREEN))
 
 
     def initTop(self):
         tit = Title_Section("Homogeneity Theorem", color=PURPLE).shift(DOWN*0.4)
-        ind_stat = Tex("Unique Repr.\\\\Theorem", font_size = 20, color=GREY).next_to(tit, 0.5*UP).to_edge(LEFT)
-        ind_pr = Tex("Proof Idea", font_size = 20, color=GREY).next_to(ind_stat, RIGHT*2)
+        ind_stat = Tex("Repr. Measurement \\&\\\\Similarity", font_size = 20, color=GREY).next_to(tit, 0.5*UP).to_edge(LEFT)
+        ind_pr = Tex("Unique Repr.\\\\Theorem", font_size = 20, color=GREY).next_to(ind_stat, RIGHT*2)
 
         ind_hthm = Tex("Homogeneity\\\\Theorem", font_size = 20, color=GREY).next_to(ind_pr, RIGHT*2) 
         ind_disc = Tex("Discussion", font_size=20, color=GREY).next_to(ind_hthm, RIGHT*2)
