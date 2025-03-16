@@ -10,7 +10,7 @@ config.write_to_movie = True
 
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
 #:'<,'>yank t | let @t = substitute(@t, '\n', '\r', 'g') | execute '! kitten @ send-text --match "title:ipythonn" ' . shellescape(@t, 1)
-#:'<,'>yank t | call system('kitten @ send-text --match "title:ipythonn" --stdin', @t)
+#:yank t | call system('kitten @ send-text --match "title:ipythonn" --stdin', @t)
 
 class Homogeneity(Scene):
     def construct(self):
