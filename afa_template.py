@@ -71,6 +71,11 @@ Title_General.set_default(  # Be careful with general size and observe that titl
     stroke_opa=s_opa,
 )
 
+TipableVMobject.set_default(
+    color=BLACK,
+    fill_color=BLACK
+)
+
 Dot.set_default(
     color=d_color
 )
