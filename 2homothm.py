@@ -15,18 +15,18 @@ config.write_to_movie = True
 class Homogeneity(Scene):
     def construct(self):
         # self.next_section(skip_animations=True)
-        initTop(self, "Homogeneity Theorem")
+        top = initTop(self, "Homogeneity Theorem", 3)
+        self.add(top)
 
         int_subtr = Tex("intradimenional subtractivity: ").shift(LEFT)
-        self.add(int_subtr)
         intr_subtr_f = MathTex(r"\metr{\ve{x}}{\ve{z}} = F(|x_1 - z_1|, \dots, |x_n - z_n|)").next_to(int_subtr, RIGHT)
-        self.add(intr_subtr_f)
         #NOTE: ad model yields translation invariance and important for arbitrary small delta balls
+        self.play(Write(VGroup(intr_subtr_f, int_subtr)))
 
         text_admod = Tex(r"AD Model $\Rightarrow$").next_to(int_subtr, LEFT*0.5)
-        self.add(text_admod)
+        self.play(Write(text_admod))
 
-        VGroup(int_subtr, intr_subtr_f, text_admod).shift(2*UP)
+        self.play(VGroup(int_subtr, intr_subtr_f, text_admod).animate.shift(2*UP))
 
         thm = Tex(r"Let $S$ be an open convex subset of $n$-dimensional Euclidean space", r". Let $\metric$ be a metric on $S$ that satisfies intradimensional subtractivity with respect to a continuous function $F: \mathbb{R}_{\geq 0}^n \rightarrow \mathbb{R}_{\geq 0}$. If $\langle S, \metric \rangle$ is a metric space with additive segments, then $\metric$ is homogeneous, i.e., for any $\ve{z} \in S$ and $t \in [0,1]$")
         thm_0 = Tex(r"Let $S$ be an open convex subset of $n$-dimensional Euclidean space", r" with $\ve{0} \in S$",
@@ -34,7 +34,7 @@ class Homogeneity(Scene):
         homo_eq = MathTex(r"\metric(",r"\ve{0},",r"t\ve{z})=t\metric(", r"\ve{0},",r"\ve{z})").next_to(thm, DOWN)
         homo_eq_0 = MathTex(r"\metric(",r"t\ve{z})=t\metric(", r"\ve{z})").move_to(homo_eq)
         thm_rect = SurroundingRectangle(VGroup(thm, homo_eq), color=d_color, buff=MED_LARGE_BUFF*0.6)
-        self.add(thm, thm_rect, homo_eq)
+        self.play(Write(VGroup(thm,thm_rect, homo_eq)))
 
         self.play(TransformMatchingTex(thm, thm_0))
         self.play(TransformMatchingTex(homo_eq, homo_eq_0))
@@ -48,7 +48,7 @@ class Homogeneity(Scene):
         thm_stat_short2 = Tex(r"$F$ cont. \& increasing\\$\metric$ metric w/ add. segments", font_size=20).next_to(thm_stat_short1, RIGHT)
         thm_res_short = Tex(r"$\Rightarrow$ homogeneous", font_size=20).next_to(thm_stat_short2, RIGHT*0.5)
 
-        thm_short = VGroup(thm_stat_short1, thm_stat_short2, thm_res_short).next_to(self.top[0].tit, RIGHT).to_edge(RIGHT)
+        thm_short = VGroup(thm_stat_short1, thm_stat_short2, thm_res_short).next_to(top[-1].tit, RIGHT).to_edge(RIGHT)
 
         self.play(Write(thm_short, shift=UP))
         self.play(FadeOut(VGroup(text_admod, int_subtr, intr_subtr_f, thm_group)), run_time=0.5)
@@ -85,20 +85,21 @@ class Homogeneity(Scene):
 
         #NOTE: prove that this is possible
         cir = Circle(color=GREY).surround(sq, buffer_factor=0.68)
-        self.add(cir)
+        self.play(Write(cir))
 
         #NOTE: try to measure in delta
         self.play(FadeOut(sq))
         
         #ANIM: point along line until proportion 0.1
         prop = 0.1
-        predot = Dot(lineOZ.point_from_proportion(prop), color=GREY)
+        predot = Dot(lineOZ.point_from_proportion(prop), color=GREY, fill_color=GREY)
         self.play(Write(predot), cir.animate.scale(0.8))
 
         ### Proof part 1
-        update_list(steps, self, 0, h_1)
+        self.play(update_list(steps, 0, h_1))
 
-        ldots = VGroup([Dot(lineOZ.point_from_proportion(i), color=GREY) for i in np.arange(0.1, 1, 0.1)])
+        #FIX: color is not grey...
+        ldots = VGroup([Dot(lineOZ.point_from_proportion(i), color=GREY, fill_color=GREY) for i in np.arange(0.1, 1, 0.1)])
         self.add(ldots[0])
         self.remove(predot)
 
@@ -116,7 +117,7 @@ class Homogeneity(Scene):
 
         #
         # ### Proof part 2
-        update_list(steps, self, 1, h_1)
+        self.play(update_list(steps, 1, h_1))
         
         self.play(Write(curve_svg[5]))
         cdots = VGroup([Dot(curve_svg[5].point_from_proportion(i)) for i in np.arange(0.1, 1, 0.1)])
@@ -163,7 +164,7 @@ class Homogeneity(Scene):
         self.next_section(skip_animations=False)
 
         # ### Proof part 3
-        update_list(steps, self, 2, h_1)
+        self.play(update_list(steps, 2, h_1))
 
         br1 = BraceLabel(VGroup(p0, ldots[0]),r"=\frac 1m \metro{z}",brace_direction=UP, font_size=20)
         self.play(Write(br1), Write(ldots[0]))
@@ -185,7 +186,7 @@ class Homogeneity(Scene):
         self.play(FadeOut(br3), br2.animate.set_color(h_1), br4.animate.set_color(h_1))
 
         # ### Proof part 4
-        update_list(steps, self, 3, h_1)
+        self.play(update_list(steps, 3, h_1))
 
         self.play(FadeOut(VGroup(br2, br4, set_svg, ldots, lineOZd, p0, p1)))
 
