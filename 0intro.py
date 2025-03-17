@@ -10,6 +10,8 @@ from afa_functions import *
 config.write_to_movie = False
 config.renderer = "opengl"
 
+#NOTE: in the beginning say the goals of this presentation: provide overview of the topics and the proofs
+# That definitions are not 100% precise and focus on intuition
 
 
 class Intro(Slide):
@@ -239,41 +241,43 @@ class test(Scene):
     def construct(self):
         top = initTop(self, "Representation of Similarity", 1)
         self.add(top)
-        self.embed()
 
 
 
         metric = Tex("Metric", color=d_color).scale(1.5).to_edge(RIGHT).shift(LEFT*2+DOWN*0.5)
         self.add(metric)
 
+
+        self.embed()
+
         mink_metr = Tex("Minkowski Metric: ")
         mink_eq = MathTex(r"\metr[p]{\ve{x}}{\ve{y}} = \left( \sum_{i=1}^{n} |x_i - y_i|^p \right)^{1/p}").next_to(mink_metr, RIGHT)
 
-        mink = VGroup(mink_metr, mink_eq).scale(1.2).arrange(RIGHT).next_to(top, DOWN)
+        mink = VGroup(mink_metr, mink_eq).arrange(RIGHT).next_to(top, DOWN)
 
         self.play(ReplacementTransform(metric, mink))
 
 
-        sep = Line(ORIGIN, DOWN*5)
-        self.add(sep)
+        # sep = Line(ORIGIN, DOWN*5, color=h_3)
+        # self.add(sep)
 
-        ad_m = Tex("AD Model", color=d_color).scale(1.5).shift(LEFT*3.5+UP)
+        ad_m = Tex("AD Model", color=d_color).scale(1.3).shift(LEFT*3.5+UP*0.5)
 
-        seg_add = Tex("Segmental Additivity", color=d_color).scale(1.5).shift(RIGHT*3.5+UP)
+        seg_add = Tex("Segmental Additivity", color=d_color).scale(1.3).shift(RIGHT*3.5+UP*0.5)
         self.add(ad_m, seg_add)
 
         ad_m_func = MathTex(r"\left(",
                             r"\sum", "_{i=1}", "^n",
                             "|", "x", "_i", "-", "y", "_i", "|", "^p",
-                            r"\right)", "^{1/p}")
+                            r"\right)", "^{1/p}").next_to(ad_m, DOWN)
         self.add(ad_m_func)
+
+
 
         ad_dec = VGroup(ad_m_func[5:7], ad_m_func[8:10]).copy()
         ad_diff = VGroup(ad_m_func[4:12]).copy()
         ad_sum = VGroup(ad_m_func[1:4]).copy()
         ad_t_back = VGroup(ad_m_func[-1]).copy()
-
-        ad_m_func.next_to(ad_m, DOWN)
 
         ad_steps = BulletedList(
             r"Decompose $\ve{x}$ and $\ve{y}$ into $(x_1, \dots x_n)$ and $(y_1, \dots, y_n)$",
@@ -283,21 +287,145 @@ class test(Scene):
             buff=MED_SMALL_BUFF
             ).scale(0.85).next_to(ad_m_func, DOWN)
         
-        self.play(Indicate(ad_dec))
-        self.play(ReplacementTransform(ad_dec, ad_steps[0]))
-        self.play(Indicate(ad_diff))
-        self.play(ReplacementTransform(ad_diff, ad_steps[1]))
-        self.play(Indicate(ad_sum))
-        self.play(ReplacementTransform(ad_sum, ad_steps[2]))
-        self.play(Indicate(ad_t_back))
-        self.play(ReplacementTransform(ad_t_back, ad_steps[3]))
+        # self.play(Indicate(ad_dec))
+        # self.play(ReplacementTransform(ad_dec, ad_steps[0]))
+        # self.play(Indicate(ad_diff))
+        # self.play(ReplacementTransform(ad_diff, ad_steps[1]))
+        # self.play(Indicate(ad_sum))
+        # self.play(ReplacementTransform(ad_sum, ad_steps[2]))
+        # self.play(Indicate(ad_t_back))
+        # self.play(ReplacementTransform(ad_t_back, ad_steps[3]))
 
-        ad_m1 = MathTex(r"G \left( \sum_{i=1}^n F_i(|x_i - y_i|) \right)").next_to(ad_steps, DOWN)
+        self.add(ad_steps)
+
+        ad_m1 = MathTex(r"G" ,r"\left( \sum_{i=1}^n", "F_i", r"(|", "x_i", "-", "y_i", r"|) \right)").scale(0.8).next_to(ad_steps, DOWN)
         self.add(ad_m1)
 
 
         self.remove(ad_steps, ad_m_func)
-        ad_m1.next_to(ad_m, DOWN)
 
-        ad_conds = BulletedList(r"$F_i, G: \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}$", "(strictly) increasing").next_to(ad_m1, DOWN*1.5)
-        self.add(ad_conds)
+        ad_cond1 = MathTex("F_i", ",", "G", r": \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}")
+        ad_cond2 = Tex("increasing")
+        ad_conds = VGroup(ad_cond1, ad_cond2).arrange(RIGHT, MED_SMALL_BUFF).scale(0.9)
+        # ad_conds = BulletedList(r"$F_i, G: \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}$", "(strictly) increasing", buff=MED_SMALL_BUFF).scale(0.9)
+
+        ad_defs = VGroup(ad_m1, ad_conds).arrange(DOWN).next_to(ad_m, DOWN)
+        self.add(ad_defs)
+
+
+
+        ax = Axes(
+            x_range = [0, 5],
+            y_range = [0, 5],
+            x_length=3,
+            y_length=3,
+            # axis_config = {"include_numbers": True},
+            tips = False
+        ).next_to(seg_add, DOWN)
+
+        self.add(ax)
+
+        px = Dot(ax.c2p(4, 0), fill_color=d_color)
+        self.add(px)
+
+        pz = Dot(ax.c2p(1, 3), fill_color=h_2)
+        self.add(pz)
+
+        pline = DashedLine(start = px, end = pz, color=GREY)
+        self.add(pline)
+
+        py = Dot(fill_color=h_1).scale(0.7).move_to(px)
+        self.add(py)
+        self.play(MoveAlongPath(py, pline))
+
+        seg_add_ex = MathTex(
+            r"\metric_{p}(", r"\bullet", ",", r"\bullet", ")", "+",
+            r"\metric_{p}(", r"\bullet", ",", r"\bullet", ")", "=",
+            r"\metric_{p}(", r"\bullet", ",", r"\bullet", ")"
+        ).next_to(ax, DOWN)
+        seg_add_ex[1].set_color(h_2)
+        seg_add_ex[3].set_color(h_1)
+        seg_add_ex[7].set_color(seg_add_ex[3].get_color())
+        seg_add_ex[9].set_color(d_color)
+        seg_add_ex[13].set_color(seg_add_ex[1].get_color()) 
+        seg_add_ex[15].set_color(seg_add_ex[9].get_color()) 
+
+        self.add(seg_add_ex)
+
+        seg_add_def0 = Tex(r"$\langle X, \metric\rangle$", r"metric space with add. segments", r"iff $\forall x, z \in X$:", arg_separator=" ")
+        seg_add_def1 = BulletedList(
+            r"$\exists$ curve with finite length connecting $x$ and $z$",
+            r"$\forall$ $y$ on that curve, the distances are additive:"
+        ,buff=MED_SMALL_BUFF)
+        seg_add_def3 = MathTex(
+            r"\metr{x}{y} + \metr{y}{z} = \metr{x}{z}"
+        )
+
+        seg_add_def = VGroup(seg_add_def0, seg_add_def1, seg_add_def3).arrange(DOWN, buff=MED_SMALL_BUFF).next_to(seg_add, DOWN).scale(0.9)
+
+        self.play(ReplacementTransform(seg_add_ex, seg_add_def[2]), ReplacementTransform(VGroup(ax, px, pz, pline, py), seg_add_def[0:2]))
+
+
+        # AD structure yields AD Model with phi_i
+        ad_s1 = Tex("AD Structure", color=d_color).scale(1.3).next_to(ad_defs, DOWN).to_edge(DOWN)
+        ad_arr = Arrow(color=d_color, stroke_width=20, tip_lengh=2,start=ORIGIN, end=UP*1.5).next_to(ad_s1, UP)
+
+        ad_m_ps = MathTex(r"\metr{\ps{a}}{\ps{b}}=", "G" ,r"\left( \sum_{i=1}^n", "F_i", r"(|", r"\varphi_i(\ps{a}_i)", "-", r"\varphi_i(\ps{b}_i)", r"|) \right)").scale(0.9).move_to(ad_m1)
+        ad_met_cond0 = MathTex(r"\varphi_i: \ps{A}_i \rightarrow \mathbb{R}").scale(0.9).next_to(ad_cond1, DOWN)
+
+        # Animations
+        self.add(ad_s1)
+        self.add(ad_arr)
+        self.play(TransformMatchingTex(ad_m1, ad_m_ps))
+        self.add(ad_met_cond0)
+
+
+        # Seg add PS yields Metr. space with add segments
+        seg_add_ps1 = Tex("Segmentally Additive PS", color=d_color).scale(1.2).next_to(seg_add_def, DOWN).to_edge(DOWN)
+        seg_add_def0 = Tex(r"$\langle X, \metric\rangle$", r"metric space with add. segments", arg_separator=" ").move_to(seg_add_def[0])
+        seg_arr = Arrow(color=d_color, stroke_width=20, tip_lengh=2,start=ORIGIN, end=UP*1.5).next_to(seg_add_ps1, UP)
+
+
+        # Animations
+        self.add(seg_add_ps1)
+        self.play(FadeOut(seg_add_def[1:]))
+        self.play(TransformMatchingTex(seg_add_def[0], seg_add_def0))
+        self.add(seg_arr)
+
+
+
+        # ad model becomes metric
+        ad_metr1 = MathTex(r"\metr{\ps{a}}{\ps{b}}=",r"F^{-1}" ,r"\left( \sum_{i=1}^n", "F", r"(|", r"\varphi_i(\ps{a}_i)", "-", r"\varphi_i(\ps{b}_i)", r"|) \right)").move_to(ad_m_ps)
+        ad_met_cond1 = MathTex("F", ",", "F^{-1}", r": \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}")
+        ad_met_cond2 = Tex("increasing", r"\& cont.", arg_separator=" ")
+
+        VGroup(ad_met_cond1, ad_met_cond2).arrange(RIGHT).next_to(ad_metr1, DOWN)
+
+        
+
+
+        ad_s = Tex("AD Structure", r"\& $\metric$ metric$^*$", color=d_color, arg_separator=" ").scale(1.2).move_to(ad_s1)
+        # transform F_i and G into F^{-1} and F, add continuity and F(0)=0
+        self.play(TransformMatchingTex(ad_s1, ad_s))
+        self.play(TransformMatchingTex(ad_m_ps, ad_metr1))
+        self.play(TransformMatchingTex(ad_cond1, ad_met_cond1), TransformMatchingTex(ad_cond2, ad_met_cond2),ad_met_cond0.animate.shift(LEFT*0.6))
+
+
+
+        # seg add metric spaces becomes complete
+        seg_add_def1 = Tex(r"$\langle X, \metric\rangle$", "complete", r"metric space with add. segments", arg_separator=" ").move_to(seg_add_def[0])
+        seg_add_ps = Tex(r"Complete", "Segmentally Additive PS", color=d_color, arg_separator=" ").scale(1.2).next_to(seg_add_def, DOWN).to_edge(DOWN)
+
+        self.play(TransformMatchingTex(seg_add_ps1, seg_add_ps))
+        self.play(TransformMatchingTex(seg_add_def0, seg_add_def1))
+
+        plus = MathTex(r"\oplus", color=YELLOW_E).scale(2).shift(UP*0.5+LEFT*0.5)
+        arr_up = Arrow(color=YELLOW_E, stroke_width=10, start=plus.get_center(), end=plus.get_center()+UP, max_stroke_width_to_length_ratio=100, max_tip_length_to_length_ratio=25)
+        seg_line = Line(plus.get_edge_center(RIGHT), seg_add.get_edge_center(LEFT)+0.1*LEFT, stroke_width=10, color=YELLOW_E)
+        ad_line = Line(ad_m.get_edge_center(RIGHT)+0.1*RIGHT, plus.get_edge_center(LEFT), stroke_width=10, color=YELLOW_E)
+
+
+        thm_transition = VGroup(plus, arr_up, ad_line, seg_line)
+
+        self.add(thm_transition)
+        thm_transition.set_color(GREEN)
