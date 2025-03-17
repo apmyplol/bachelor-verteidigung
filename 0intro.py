@@ -7,8 +7,9 @@ from afa_functions import *
 
 
 
-config.write_to_movie = False
-config.renderer = "opengl"
+config.write_to_movie = True
+# config.renderer = "opengl"
+rt = 0.7
 
 #NOTE: in the beginning say the goals of this presentation: provide overview of the topics and the proofs
 # That definitions are not 100% precise and focus on intuition
@@ -17,10 +18,14 @@ config.renderer = "opengl"
 class Intro(Slide):
     def construct(self):
         # self.next_section(skip_animations=True)
+        self.next_slide()
+        self.wait_time_between_slides = 0.1
         title = Title_Presentation(title= "Representational Measurement of Similarity: The Additive-Difference Model, Revisited",
                                     affiliation= "TU Darmstadt",
                                     author= "Arthur Liske")
         self.add(title)
+        self.wait(1)
+        self.next_slide()
 
         points = BulletedList(r"Representational Measurement",
                  r"Representation of Similarity",
@@ -30,14 +35,21 @@ class Intro(Slide):
                 buff=MED_SMALL_BUFF)
 
         self.wipe(title, points)
+        self.next_slide()
+
         
         top = initTop(self, "Representational Measurement", 0)
 
-        self.play(ReplacementTransform(points, top[0:5]), Write(top[-1]))
+        self.play(ReplacementTransform(points, top[0:5]))
+        self.add(top[-1])
+        self.next_slide()
+
 
 
         mes_def = Tex(r"Loosely speaking, measurement is the quantification of observations.")
-        self.play(Write(mes_def))
+        self.play(Write(mes_def), run_time=1)
+        self.next_slide()
+
 
         sun = SVGMobject("./images/emoji_sun.svg", use_svg_cache=False)
         sunny_cloud = SVGMobject("./images/emoji_sunny_cloud.svg", use_svg_cache=False).next_to(sun)
@@ -45,7 +57,9 @@ class Intro(Slide):
         snow_cloud = SVGMobject("./images/emoji_snow_cloud.svg", use_svg_cache=False).next_to(cloud)
         weather = VGroup(sun, sunny_cloud, cloud, snow_cloud).scale(0.3).arrange(DOWN).to_edge(LEFT).shift(RIGHT*2.5+DOWN)
 
-        self.play(Write(weather), mes_def.animate.next_to(self.top, DOWN*0.5), run_time=0.6)
+        self.play(Write(weather), mes_def.animate.next_to(self.top, DOWN*0.5), run_time=1)
+        self.next_slide()
+
 
         cels = VGroup(MathTex(r"30^\circ C"),
                     MathTex(r"17^\circ C"),
@@ -56,6 +70,8 @@ class Intro(Slide):
         
         arrs = VGroup([DashedVMobject(CurvedArrow(weather[i].get_center()+RIGHT*0.5, cels[i].get_center() + LEFT*0.6, angle=-TAU/8, tip_length=0.2), dashed_ratio=0.7) for i in range(0, 4)])
         self.play(Write(cels), Write(arrs))
+        self.next_slide()
+
 
         
         weather_box = SurroundingRectangle(weather, color=d_color)
@@ -64,12 +80,18 @@ class Intro(Slide):
         cels_box = SurroundingRectangle(cels, color=d_color)
         num = Tex(r"Numerical\\Structure").next_to(cels_box, DOWN)
         self.play(Write(VGroup(weather_box, emp)))
+        self.next_slide()
+
 
         self.play(Write(VGroup(cels_box, num)))
+        self.next_slide()
+
 
         
         func = MathTex(r"\metric").scale(1.5).next_to(arrs, UP)
         self.play(Write(func))
+        self.next_slide()
+
 
         # sun <= clouds <=> f(sun) <= f(clouds)
         sun_1 = weather[0].copy().scale(0.5)
@@ -86,6 +108,8 @@ class Intro(Slide):
         homo_gr2 = VGroup(midtex, sun_2, midtex2, cl_2, endtex).arrange(RIGHT, buff=0)
         homo_gr = VGroup(homo_gr1,homo_gr2).arrange(RIGHT, buff=0.2).next_to(arrs, DOWN)
         self.play(ReplacementTransform(VGroup(weather[0], weather[2], cels[0], cels[2], arrs[0], arrs[2]).copy(),homo_gr))
+        self.next_slide()
+
 
 
 
@@ -96,46 +120,53 @@ class Intro(Slide):
         num.add_updater(lambda num: num.next_to(cels_box, DOWN))
         
         fat_dash = CurvedArrow(weather.get_center()+RIGHT, cels.get_center() + 1.16*LEFT, angle=-TAU/8, tip_length=0.4, stroke_width=4)
-        self.play(weather.animate.arrange_in_grid(rows=2), cels.animate.arrange_in_grid(rows=2), Transform(arrs, fat_dash), func.animate.next_to(fat_dash, UP).shift(LEFT*2))
-        
+
+        self.play(weather.animate.arrange_in_grid(rows=2), cels.animate.arrange_in_grid(rows=2), ReplacementTransform(arrs, fat_dash), func.animate.next_to(fat_dash, UP).shift(LEFT*2))
         dp = MathTex(r":").next_to(func, RIGHT*0.3)
         self.play(homo_gr.animate.next_to(dp, RIGHT*0.5), Write(dp))
+        self.next_slide()
+
+        
+
 
 
         existThm2 = Tex(r"Proves existence of homomorphism $\metric$").next_to(homo_gr, UP*2)
         existThm = Tex(r"Existence/Representation Theorem:", color=d_color).scale(1.2).next_to(existThm2, UP)
 
-        self.play(Write(existThm2), Write(existThm))
+        self.play(FadeIn(VGroup(existThm2, existThm)))
+        self.next_slide()
+
 
 
         fat_dash_dot = DashedVMobject(CurvedArrow(weather.get_center()+RIGHT, cels.get_center() + 1.16*LEFT, angle=TAU/8, tip_length=0.3, stroke_width=4)).shift(DOWN*0.5)
 
         dels = MathTex(r"\metric'").scale(1.5).next_to(fat_dash_dot, DOWN)
 
-        self.play(Write(fat_dash_dot), Write(dels))
+        self.play(Write(fat_dash_dot), Write(dels), run_time=0.6)
+        self.next_slide()
+
 
         uniqueThm = Tex(r"Uniqueness Theorem:", color=d_color).scale(1.2).next_to(dels, DOWN)
         uniqueThm2 = Tex(r"Proves ``how many'' such homomorphisms exist").next_to(uniqueThm, DOWN)
 
-        self.play(Write(uniqueThm), Write(uniqueThm2))
-
-
-
+        self.play(FadeIn(VGroup(uniqueThm, uniqueThm2)))
+        self.next_slide()
         
-        self.play(update_list(self.top, 0))
-        # self.wipe()
+
 
         s1 = Tex(r"CogSci and Psychology are interested in mental representations:").shift(UP*2)
-        self.add(s1)
         s2 = Tex(r"How external reality is modelled in the mind.").next_to(s1, DOWN)
-        self.add(s2)
 
-        dim = Tex("Dimensional").next_to(s2, DL*2).shift(DOWN*0.5)
-        self.add(dim)
+        self.wipe(VGroup(uniqueThm, uniqueThm2, fat_dash_dot, dels, fat_dash, existThm, existThm2, weather, cels, emp, num, weather_box, cels_box, dp, mes_def, homo_gr, func), VGroup(s1, s2))
+        self.play(update_list(self.top, 0))
+        self.next_slide()
 
-        cate = Tex("Catagorizations").next_to(s2, DR*2).shift(DOWN*0.5)
-        self.add(cate)
+        dim = Tex("Dimensions").scale(1.4).next_to(s2, DL*1.7).shift(DOWN*0.5)
 
+        cate = Tex("Categorizations").scale(1.4).next_to(s2, DR*1.7).shift(DOWN*0.5)
+        self.play(FadeIn(VGroup(dim, cate)))
+
+        self.next_slide()
 
 
         #ANIM: maybe animate colors
@@ -150,15 +181,19 @@ class Intro(Slide):
 
         dim_ex = BulletedList("Color: RGB, HSV",
                               "Speech: pitch, loudness, speech rate").next_to(dim, DOWN)
-        self.add(dim_ex)
+        self.play(Write(dim_ex), run_time=1)
         # dots=VGroup(dot, r_dot, g_dot, b_dot).arrange(RIGHT).next_to(dim_ex[0], RIGHT)
         # self.add(dots)
 
+        self.next_slide()
+
         cat_ex = BulletedList("Color: light, dark, warm, cold",
                               "Faces: happy, angry, sad").next_to(cate, DOWN)
-        self.add(cat_ex)
+        self.play(Write(cat_ex), run_time=1)
+        self.next_slide()
         
 
+        # Next section, introducing similarity measurement
 
         c1 = MathTex(r"\bullet", r"\succsim", r"\bullet").scale(1.5)
         c2 = MathTex("(", r"\bullet", "," , r"\bullet", r") \succsim (", r"\bullet", ",", r"\bullet", ")").scale(1.5).next_to(c1, DOWN)
@@ -173,20 +208,25 @@ class Intro(Slide):
         c2[5].set_color("#eab4fa")
         c2[7].set_color(d_color)
 
-        self.add(c1)
+        self.wipe(VGroup(cat_ex, dim_ex, cate, dim, s1, s2), c1)
+        self.next_slide()
 
         self.play(Transform(c1[1], ques))
+        self.next_slide()
         
-        self.add(c2)
-        
+        self.play(Write(c2))
+        self.next_slide()
 
-        self.remove(c1)
-        c2.next_to(top, DOWN)
+        self.play(FadeOut(c1))
+        self.play(c2.animate.next_to(top, DOWN))
+        self.next_slide()
+
+
 
         prox_st = Tex("Proximity Structure", color=d_color).scale(1.5).to_edge(LEFT).shift(RIGHT+DOWN*0.5)
-        self.add(prox_st)
         metric = Tex("Metric", color=d_color).scale(1.5).to_edge(RIGHT).shift(LEFT*2+DOWN*0.5)
-        self.add(metric)
+        self.play(Write(VGroup(prox_st, metric)), run_time=1)
+        self.next_slide()
 
 
         ps_def0 = Tex(r"$\langle \ps{A}, \succsim \rangle$ is a PS iff for all $\ps{a}, \ps{b} \in \ps{A}:$")
@@ -199,7 +239,7 @@ class Intro(Slide):
 
         ps_def = VGroup(ps_def0, ps_def1).arrange(DOWN).next_to(prox_st, DOWN)
 
-        self.add(ps_def)
+
 
         
         met_def0 = Tex(r"$\metric$ is a metric on $X$ iff for all $x, y, z \in X$:")
@@ -210,21 +250,21 @@ class Intro(Slide):
 
         met_def = VGroup(met_def0, met_def1).arrange(DOWN).next_to(metric, DOWN)
 
-        self.add(met_def)
+        self.play(FadeIn(met_def))
+        self.next_slide()
+
+        self.play(FadeIn(ps_def))
+        self.next_slide()
+
 
         homo_tex = Tex(r"$\metric$ homomorphism:").scale(1.2).next_to(top, DOWN)
-        
-
-
         d1 = MathTex(r"\iff \metric", "(", r"\bullet", "," , r"\bullet", r") \geq \metric (", r"\bullet", ",", r"\bullet", ")").scale(1.5)
-
         d1[2].set_color(ORANGE)
         d1[4].set_color(GREEN)
         d1[6].set_color("#eab4fa")
         d1[8].set_color(d_color)
-
         homo_ex = VGroup(c2, d1).arrange(RIGHT).scale(0.7).next_to(homo_tex, DOWN)
-        self.add(homo_ex, homo_tex)
+
 
         homo_eq = MathTex(r"""
                             (\ps{a}, \ps{b}) \succsim (\ps{c}, \ps{d})
@@ -232,45 +272,38 @@ class Intro(Slide):
                             \delta(\ps{a}, \ps{b}) \geq \delta(\ps{c}, \ps{d})
         """).scale(1.2).next_to(homo_ex, DOWN)
 
-        self.add(homo_eq)
+
+        self.play(FadeIn(VGroup(homo_ex, homo_tex)), Write(homo_eq))
+        self.next_slide()
 
 
-
-
-class test(Scene):
-    def construct(self):
-        top = initTop(self, "Representation of Similarity", 1)
-        self.add(top)
-
-
-
-        metric = Tex("Metric", color=d_color).scale(1.5).to_edge(RIGHT).shift(LEFT*2+DOWN*0.5)
-        self.add(metric)
-
-
-        self.embed()
 
         mink_metr = Tex("Minkowski Metric: ")
         mink_eq = MathTex(r"\metr[p]{\ve{x}}{\ve{y}} = \left( \sum_{i=1}^{n} |x_i - y_i|^p \right)^{1/p}").next_to(mink_metr, RIGHT)
 
         mink = VGroup(mink_metr, mink_eq).arrange(RIGHT).next_to(top, DOWN)
 
-        self.play(ReplacementTransform(metric, mink))
+        self.play(ReplacementTransform(metric, mink), FadeOut(VGroup(homo_eq, homo_ex, homo_tex, met_def, ps_def, prox_st)))
+        self.next_slide()
+
 
 
         # sep = Line(ORIGIN, DOWN*5, color=h_3)
         # self.add(sep)
 
         ad_m = Tex("AD Model", color=d_color).scale(1.3).shift(LEFT*3.5+UP*0.5)
-
         seg_add = Tex("Segmental Additivity", color=d_color).scale(1.3).shift(RIGHT*3.5+UP*0.5)
-        self.add(ad_m, seg_add)
+        self.play(Write(VGroup(ad_m, seg_add)), run_time=1)
+        self.next_slide()
+
 
         ad_m_func = MathTex(r"\left(",
                             r"\sum", "_{i=1}", "^n",
                             "|", "x", "_i", "-", "y", "_i", "|", "^p",
                             r"\right)", "^{1/p}").next_to(ad_m, DOWN)
-        self.add(ad_m_func)
+        self.play(FadeIn(ad_m_func), run_time=0.5)
+        self.next_slide()
+
 
 
 
@@ -287,22 +320,32 @@ class test(Scene):
             buff=MED_SMALL_BUFF
             ).scale(0.85).next_to(ad_m_func, DOWN)
         
-        # self.play(Indicate(ad_dec))
-        # self.play(ReplacementTransform(ad_dec, ad_steps[0]))
-        # self.play(Indicate(ad_diff))
-        # self.play(ReplacementTransform(ad_diff, ad_steps[1]))
-        # self.play(Indicate(ad_sum))
-        # self.play(ReplacementTransform(ad_sum, ad_steps[2]))
-        # self.play(Indicate(ad_t_back))
-        # self.play(ReplacementTransform(ad_t_back, ad_steps[3]))
+        self.play(Indicate(ad_dec))
+        self.play(ReplacementTransform(ad_dec, ad_steps[0]))
+        self.next_slide()
 
-        self.add(ad_steps)
+        self.play(Indicate(ad_diff))
+        self.play(ReplacementTransform(ad_diff, ad_steps[1]))
+        self.next_slide()
+
+        self.play(Indicate(ad_sum))
+        self.play(ReplacementTransform(ad_sum, ad_steps[2]))
+        self.next_slide()
+
+        self.play(Indicate(ad_t_back))
+        self.play(ReplacementTransform(ad_t_back, ad_steps[3]))
+        self.next_slide()
+
 
         ad_m1 = MathTex(r"G" ,r"\left( \sum_{i=1}^n", "F_i", r"(|", "x_i", "-", "y_i", r"|) \right)").scale(0.8).next_to(ad_steps, DOWN)
-        self.add(ad_m1)
+        self.play(Write(ad_m1))
+        self.next_slide()
 
 
-        self.remove(ad_steps, ad_m_func)
+
+        self.play(FadeOut(VGroup(ad_steps, ad_m_func)))
+        self.next_slide()
+
 
         ad_cond1 = MathTex("F_i", ",", "G", r": \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}")
         ad_cond2 = Tex("increasing")
@@ -310,7 +353,8 @@ class test(Scene):
         # ad_conds = BulletedList(r"$F_i, G: \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}$", "(strictly) increasing", buff=MED_SMALL_BUFF).scale(0.9)
 
         ad_defs = VGroup(ad_m1, ad_conds).arrange(DOWN).next_to(ad_m, DOWN)
-        self.add(ad_defs)
+        self.play(FadeIn(ad_defs))
+        self.next_slide()
 
 
 
@@ -323,20 +367,24 @@ class test(Scene):
             tips = False
         ).next_to(seg_add, DOWN)
 
-        self.add(ax)
+        self.play(Write(ax))
+        self.next_slide()
+
 
         px = Dot(ax.c2p(4, 0), fill_color=d_color)
-        self.add(px)
-
         pz = Dot(ax.c2p(1, 3), fill_color=h_2)
-        self.add(pz)
+        self.play(Write(VGroup(px, pz)))
+        self.next_slide()
+
 
         pline = DashedLine(start = px, end = pz, color=GREY)
-        self.add(pline)
+        pline_ndash = Line(start=px, end=pz)
+        self.play(Write(pline), run_time=0.6)
+        self.next_slide()
+
 
         py = Dot(fill_color=h_1).scale(0.7).move_to(px)
-        self.add(py)
-        self.play(MoveAlongPath(py, pline))
+
 
         seg_add_ex = MathTex(
             r"\metric_{p}(", r"\bullet", ",", r"\bullet", ")", "+",
@@ -350,7 +398,9 @@ class test(Scene):
         seg_add_ex[13].set_color(seg_add_ex[1].get_color()) 
         seg_add_ex[15].set_color(seg_add_ex[9].get_color()) 
 
-        self.add(seg_add_ex)
+        self.play(Write(seg_add_ex), MoveAlongPath(py, pline_ndash), run_time=1.5)
+        self.next_slide()
+
 
         seg_add_def0 = Tex(r"$\langle X, \metric\rangle$", r"metric space with add. segments", r"iff $\forall x, z \in X$:", arg_separator=" ")
         seg_add_def1 = BulletedList(
@@ -364,34 +414,23 @@ class test(Scene):
         seg_add_def = VGroup(seg_add_def0, seg_add_def1, seg_add_def3).arrange(DOWN, buff=MED_SMALL_BUFF).next_to(seg_add, DOWN).scale(0.9)
 
         self.play(ReplacementTransform(seg_add_ex, seg_add_def[2]), ReplacementTransform(VGroup(ax, px, pz, pline, py), seg_add_def[0:2]))
+        self.next_slide()
+
 
 
         # AD structure yields AD Model with phi_i
         ad_s1 = Tex("AD Structure", color=d_color).scale(1.3).next_to(ad_defs, DOWN).to_edge(DOWN)
-        ad_arr = Arrow(color=d_color, stroke_width=20, tip_lengh=2,start=ORIGIN, end=UP*1.5).next_to(ad_s1, UP)
+        ad_arr = Arrow(color=d_color, stroke_width=10,start=ORIGIN, end=UP*1.5, max_stroke_width_to_length_ratio=100, max_tip_length_to_length_ratio=25).next_to(ad_s1, UP)
 
         ad_m_ps = MathTex(r"\metr{\ps{a}}{\ps{b}}=", "G" ,r"\left( \sum_{i=1}^n", "F_i", r"(|", r"\varphi_i(\ps{a}_i)", "-", r"\varphi_i(\ps{b}_i)", r"|) \right)").scale(0.9).move_to(ad_m1)
         ad_met_cond0 = MathTex(r"\varphi_i: \ps{A}_i \rightarrow \mathbb{R}").scale(0.9).next_to(ad_cond1, DOWN)
 
         # Animations
-        self.add(ad_s1)
-        self.add(ad_arr)
-        self.play(TransformMatchingTex(ad_m1, ad_m_ps))
-        self.add(ad_met_cond0)
+        self.play(Write(VGroup(ad_s1, ad_arr)))
+        self.next_slide()
 
-
-        # Seg add PS yields Metr. space with add segments
-        seg_add_ps1 = Tex("Segmentally Additive PS", color=d_color).scale(1.2).next_to(seg_add_def, DOWN).to_edge(DOWN)
-        seg_add_def0 = Tex(r"$\langle X, \metric\rangle$", r"metric space with add. segments", arg_separator=" ").move_to(seg_add_def[0])
-        seg_arr = Arrow(color=d_color, stroke_width=20, tip_lengh=2,start=ORIGIN, end=UP*1.5).next_to(seg_add_ps1, UP)
-
-
-        # Animations
-        self.add(seg_add_ps1)
-        self.play(FadeOut(seg_add_def[1:]))
-        self.play(TransformMatchingTex(seg_add_def[0], seg_add_def0))
-        self.add(seg_arr)
-
+        self.play(TransformMatchingTex(ad_m1, ad_m_ps), Write(ad_met_cond0))
+        self.next_slide()
 
 
         # ad model becomes metric
@@ -401,23 +440,36 @@ class test(Scene):
 
         VGroup(ad_met_cond1, ad_met_cond2).arrange(RIGHT).next_to(ad_metr1, DOWN)
 
-        
-
 
         ad_s = Tex("AD Structure", r"\& $\metric$ metric$^*$", color=d_color, arg_separator=" ").scale(1.2).move_to(ad_s1)
         # transform F_i and G into F^{-1} and F, add continuity and F(0)=0
         self.play(TransformMatchingTex(ad_s1, ad_s))
+        self.next_slide()
+
         self.play(TransformMatchingTex(ad_m_ps, ad_metr1))
         self.play(TransformMatchingTex(ad_cond1, ad_met_cond1), TransformMatchingTex(ad_cond2, ad_met_cond2),ad_met_cond0.animate.shift(LEFT*0.6))
+        self.next_slide()
 
+
+
+
+        # Seg add PS yields Metr. space with add segments
+        seg_add_ps1 = Tex("Segmentally Additive PS", color=d_color).scale(1.2).next_to(seg_add_def, DOWN).to_edge(DOWN)
+        seg_arr = Arrow(color=d_color, stroke_width=10, start=ORIGIN, end=UP*1.5, max_stroke_width_to_length_ratio=100, max_tip_length_to_length_ratio=25).next_to(seg_add_ps1, UP)
+
+
+        seg_add_def0 = seg_add_def[0]
+        self.play(Write(VGroup(seg_add_ps1, seg_arr)))
+        self.next_slide()
 
 
         # seg add metric spaces becomes complete
         seg_add_def1 = Tex(r"$\langle X, \metric\rangle$", "complete", r"metric space with add. segments", arg_separator=" ").move_to(seg_add_def[0])
         seg_add_ps = Tex(r"Complete", "Segmentally Additive PS", color=d_color, arg_separator=" ").scale(1.2).next_to(seg_add_def, DOWN).to_edge(DOWN)
 
-        self.play(TransformMatchingTex(seg_add_ps1, seg_add_ps))
-        self.play(TransformMatchingTex(seg_add_def0, seg_add_def1))
+        self.play(TransformMatchingTex(seg_add_ps1, seg_add_ps), TransformMatchingTex(seg_add_def0, seg_add_def1))
+        self.next_slide()
+
 
         plus = MathTex(r"\oplus", color=YELLOW_E).scale(2).shift(UP*0.5+LEFT*0.5)
         arr_up = Arrow(color=YELLOW_E, stroke_width=10, start=plus.get_center(), end=plus.get_center()+UP, max_stroke_width_to_length_ratio=100, max_tip_length_to_length_ratio=25)
@@ -427,5 +479,23 @@ class test(Scene):
 
         thm_transition = VGroup(plus, arr_up, ad_line, seg_line)
 
-        self.add(thm_transition)
-        thm_transition.set_color(GREEN)
+        self.play(Write(thm_transition))
+        self.next_slide()
+
+
+        self.play(thm_transition.animate.set_color(GREEN))
+
+
+class test(Scene):
+    def construct(self):
+        top = initTop(self, "Representation of Similarity", 1)
+        self.add(top)
+
+
+
+        metric = Tex("Metric", color=d_color).scale(1.5).to_edge(RIGHT).shift(LEFT*2+DOWN*0.5)
+        self.add(metric)
+
+
+        self.embed()
+
