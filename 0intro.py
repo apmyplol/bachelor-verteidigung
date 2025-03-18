@@ -3,6 +3,7 @@ from manim import *
 from manim.opengl import *
 from beanim import *
 from manim_slides import Slide
+from svgelements import tostring
 from afa_functions import *
 
 
@@ -14,7 +15,7 @@ config.write_to_movie = True
 # That definitions are not 100% precise and focus on intuition
 
 
-class Intro(Scene):
+class Intro(Slide):
     def ns(self, *args, **kwargs):
         if isinstance(self, Slide):
             self.next_slide(*args, **kwargs)
@@ -27,9 +28,8 @@ class Intro(Scene):
             
 
     def construct(self):
-        self.next_section(skip_animations=True)
+        # self.next_section(skip_animations=True)
         self.wait_time_between_slides = 0.1
-
 
         self.start_and_content()
 
@@ -40,6 +40,9 @@ class Intro(Scene):
         part4 = self.ps_and_metric(part3)
 
         part5 = self.ad_model_seg_add(part4)
+
+        self.unique_repr_thm(part5)
+
     
 
 
@@ -486,18 +489,111 @@ class Intro(Scene):
         mink_eq1 = MathTex(r"\metric", "(", r"\ps{a}", ",", r"\ps{b}", r")= \left( \sum_{i=1}^{n} |", r"\varphi_i(\ps{a}_i)",  "-", r"\varphi_i(\ps{b}_i)", r"|^p \right)^{1/p}").move_to(mink_eq)
         mink_metr1 = Tex(r"$\metric$ Homomorphism: ").next_to(mink_eq1, LEFT*0.8)
         self.play(TransformMatchingTex(mink_metr, mink_metr1), TransformMatchingTex(mink_eq, mink_eq1), thm_transition.animate.set_color(GREEN))
-        return VGroup(mink_metr1, seg_line, ad_line, arr_up, plus, seg_add_ps, seg_arr, ad_s, ad_arr, seg_add, ad_m)
+        return VGroup(VGroup(ad_metr1, ad_met_cond0, ad_met_cond1, ad_met_cond2 ,seg_add_def1), VGroup(mink_metr1, mink_eq1, seg_line, ad_line, arr_up, plus, seg_add_ps, seg_arr, ad_s, ad_arr, seg_add, ad_m))
+
+
+    def unique_repr_thm(self, prev_part):
+        ad_metr1 = prev_part[0][0].copy()
+        ad_met_cond0 = prev_part[0][1].copy()
+        ad_met_cond1 = prev_part[0][2].copy()
+        ad_met_cond2 = prev_part[0][3].copy()
+        seg_add_def1 = prev_part[0][4].copy()
+
+        ad_met_cond0.scale(1.2)
+        ad_metr1.scale(0.8)
+        
+        #TODO: check definition of F if it is really defined of R>=0 because that doesnt make any sense
+        #TODO: correctly move this stuff instead of redrawing
+        # move conditions
+        conds = VGroup(ad_metr1, ad_met_cond0, ad_met_cond1, ad_met_cond2, seg_add_def1).arrange(DOWN, buff=MED_SMALL_BUFF).center().shift(LEFT*3)
+        self.wp(prev_part, conds)
+        self.play(*update_list(self.top, 1))
+        # self.play(ReplacementTransform(prev_part[0], conds), FadeOut(prev_part[1]), )
+        self.ns()
+
+        # Fade In the result we want to prove
+        long_arr = MathTex(r"\Longrightarrow").scale(2).next_to(conds)
+        f_res = MathTex(r"F(x) = \alpha x ^ p\\ p \geq 0").next_to(long_arr)
+        self.play(FadeIn(VGroup(long_arr, f_res)))
+        self.ns()
+
+        # Add Theorem that we use and rectangle
+        thm = Tex(r"""
+		\begin{thm*}[Uniqueness of Homogeneous Quasi-Arithmetic Means]
+			Suppose that $\phi$ is continuous and strictly increasing in the open interval $(0,\infty)$ and that
+			\begin{equation*}
+				\phi^{-1} \left( \sum_{i=1}^{N} w_i \phi(t x_i) \right) = t \phi^{-1} \left( \sum_{i=1}^{N} w_i \phi(x_i) \right) 
+			\end{equation*}
+			for all positive $\ve{x}, \ve{w}, t$ and all $N \in \mathbb{N}$ such that $\sum_{i=1}^{n} w_i = 1$. If $\phi > 0$ then $\phi(x) = \alpha x^p + \beta$ and $\alpha, \beta, p \in \mathbb{R}, p > 0$.
+		\end{thm*}
+        """).scale(0.8).to_edge(DOWN)
+        thm_rect = SurroundingRectangle(thm, color=d_color)
+        # Shift other stuff and add theorem
+        self.play(conds.animate.scale(0.8).shift(UL+LEFT))
+        self.play(f_res.animate.next_to(conds, RIGHT).to_edge(RIGHT))
+        sarr1 = MathTex(r"\Rightarrow").scale(2).next_to(conds)
+        sarr2 = MathTex(r"\Rightarrow").scale(2).next_to(f_res, LEFT)
+        self.play(ReplacementTransform(long_arr, VGroup(sarr1, sarr2)),FadeIn(VGroup(thm, thm_rect)))
+        self.ns()
+
+        # Add center part with function we want to derive
+        to_prove_func = MathTex(r"F^{-1} \left( \sum_{i=1}^{N} w_i F(t x_i) \right) = t F^{-1} \left( \sum_{i=1}^{N} w_i F(x_i) \right)").scale(0.8)
+        to_prove_conds = MathTex(r"\forall N \in \mathbb{N}\\", r"\forall t, x_i, w_i > 0")
+        to_prove = VGroup(to_prove_func, to_prove_conds).arrange(DOWN, buff=MED_SMALL_BUFF).next_to(sarr1).shift(RIGHT*0.5)
+        to_prove_box = SurroundingRectangle(to_prove, color=YELLOW_E)
+        self.play(Write(VGroup(to_prove, to_prove_box)))
+        self.ns()
+
+
+        l_sep = Line(LEFT, RIGHT).shift(DOWN*0.5)
+        l_sep.width = config["frame_width"]
+        proof_steps_h = Tex("Proof Steps", color=d_color).next_to(l_sep, DOWN).scale(1.4)
+        self.play(Transform(VGroup(thm, thm_rect), VGroup(l_sep, proof_steps_h)))
+        self.ns()
+
+
+        # Add text for the proof steps and arrange them with circled numbers
+        n_text = [Tex(r"Homogeneity Thm.:\\$\rightarrow$ homog. for $t \in [0, 1]$"),
+                  Tex(r"Extend $F$ to $\mathbb{R}_{\geq 0} \rightarrow \tilde F$"),
+                  Tex(r"$\tilde F$ cont., monot. \& homog. $\forall t > 0 $"),
+                  Tex(r"Increase summands $n \rightarrow N \in \mathbb{N}$"),
+                  Tex(r"Incorporate weights $w_i$"),
+                  Tex(r"$\tilde F = F$ for all $x \in \mathbb{R}_{\geq 0}$")]
+        nums = VGroup()
+        for i in range(1, 7):
+            n = MathTex(str(i), color=d_color)
+            c = Circle(color=d_color).surround(n, buffer_factor=1.5)
+            t = n_text[i-1]
+            nums += VGroup(VGroup(n, c), t).arrange(RIGHT, buff=MED_SMALL_BUFF)
+        # Arrange downwards, add items 2-4 to center, 1 to left and 5 to right
+        nums.arrange(DOWN, aligned_edge=LEFT)
+        nums_center = VGroup(nums[1:5]).next_to(proof_steps_h, DOWN)
+        nums[0].next_to(nums_center, LEFT).to_edge(LEFT)
+        nums[-1].next_to(nums_center, RIGHT).to_edge(RIGHT)
+
+        # add everything
+        for i in range(0, 6):
+            self.play(Write(nums[i]), run_time=1.0)
+            self.ns()
+
+        #return visible objects for next method
+        return [nums[0][1], VGroup(nums[1:], proof_steps_h, l_sep, to_prove, to_prove_box, f_res, conds, sarr1, sarr2)]
 
 class test(Scene):
     def construct(self):
         top = initTop(self, "Representation of Similarity", 1)
         self.add(top)
-
-
-
-        metric = Tex("Metric", color=d_color).scale(1.5).to_edge(RIGHT).shift(LEFT*2+DOWN*0.5)
-        self.add(metric)
         self.embed()
 
+        ad_metr1 = MathTex(r"\metr{\ps{a}}{\ps{b}}=",r"F^{-1}" ,r"\left( \sum_{i=1}^n", "F", r"(|", r"\varphi_i(\ps{a}_i)", "-", r"\varphi_i(\ps{b}_i)", r"|) \right)")
+        ad_met_cond1 = MathTex("F", ",", "F^{-1}", r": \mathbb{R}_{\geq 0} \rightarrow \mathbb{R}_{\geq 0}")
+        ad_met_cond2 = Tex("increasing", r"\& cont.", arg_separator=" ")
+        # VGroup(ad_met_cond1, ad_met_cond2).arrange(RIGHT).next_to(ad_metr1, DOWN)
+        ad_met_cond0 = MathTex(r"\varphi_i: \ps{A}_i \rightarrow \mathbb{R}").scale(0.9).next_to(ad_met_cond1, DOWN)
 
+        seg_add_def1 = Tex(r"$\langle \ps{A}, \metric\rangle$", "complete", r"metric space\\ with add. segments", arg_separator=" ").to_edge(RIGHT)
+
+        # self.add(ad_metr1, ad_met_cond0, ad_met_cond1, ad_met_cond2, seg_add_def1)
+
+        #Adjust stuff
 
