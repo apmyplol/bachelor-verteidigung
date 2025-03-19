@@ -70,7 +70,7 @@ class Intro(Slide):
                  r"Representation of Similarity",
                  r"Unique Representation Theorem",
                  r"Homogeneity Theorem",
-                 r"Discussion",
+                 r"References",
                 buff=MED_SMALL_BUFF)
 
         self.play(self.wp(title, points))
