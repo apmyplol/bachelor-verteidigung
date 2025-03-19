@@ -7,6 +7,7 @@
     <title>Manim Slides</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.css">
+    <link rel="stylesheet" href="plugins/pointer/pointer.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/theme/black.min.css">
 
     <!-- Theme used for syntax highlighting of code -->
@@ -377,12 +378,14 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.1.0/reveal.min.js"></script>
+  <script src="plugins/pointer/pointer.js"></script>
 
     <!-- To include plugins, see: https://revealjs.com/plugins/ -->
 
     <!-- <script src="index.js"></script> -->
     <script>
       Reveal.initialize({
+        plugins: [RevealPointer],
         
         // The "normal" size of the presentation, aspect ratio will
         // be preserved when the presentation is scaled to fit different
@@ -636,7 +639,7 @@
         hideInactiveCursor: true,
 
         // Time before the cursor is hidden (in ms)
-        hideCursorTime: 5000
+        hideCursorTime: 100
       });
 
       
