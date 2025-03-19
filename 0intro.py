@@ -560,9 +560,10 @@ class Intro(Slide):
 
         l_sep = Line(LEFT, RIGHT).shift(DOWN*0.5)
         l_sep.width = config["frame_width"]
-        proof_steps_h = Tex("Proof Steps", color=d_color).next_to(l_sep, DOWN).scale(1.4)
-        self.play(ReplacementTransform(VGroup(thm, thm_rect), VGroup(l_sep, proof_steps_h)))
-        self.ns()
+        self.play(Write(l_sep), VGroup(thm, thm_rect).animate.to_edge(LEFT))
+        # proof_steps_h = Tex("Proof Steps", color=d_color).next_to(l_sep, DOWN).scale(1.4)
+        # self.play(ReplacementTransform(VGroup(thm, thm_rect), VGroup(l_sep, proof_steps_h)))
+        # self.ns()
 
         # self.next_section(skip_animations=False)
 
@@ -580,10 +581,10 @@ class Intro(Slide):
             t = n_text[i-1]
             nums += VGroup(VGroup(n, c), t).arrange(RIGHT, buff=MED_SMALL_BUFF)
         # Arrange downwards, add items 2-4 to center, 1 to left and 5 to right
-        nums.arrange(DOWN, aligned_edge=LEFT)
-        nums_center = VGroup(nums[1:5]).next_to(proof_steps_h, DOWN)
-        nums[0].next_to(nums_center, LEFT).to_edge(LEFT)
-        nums[-1].next_to(nums_center, RIGHT).to_edge(RIGHT)
+        nums.arrange(DOWN, aligned_edge=LEFT).scale(0.8).next_to(thm, RIGHT)
+        # nums_center = VGroup(nums[1:5]).next_to(proof_steps_h, DOWN)
+        # nums[0].next_to(nums_center, LEFT).to_edge(LEFT)
+        # nums[-1].next_to(nums_center, RIGHT).to_edge(RIGHT)
 
         # add everything
         for i in range(0, 6):
@@ -591,7 +592,7 @@ class Intro(Slide):
             self.ns()
 
         #return visible objects for next method
-        return VGroup(nums, proof_steps_h, l_sep, to_prove, to_prove_box, f_res, conds, sarr1, sarr2)
+        return VGroup(nums,thm, thm_rect, l_sep, to_prove, to_prove_box, f_res, conds, sarr1, sarr2)
 
 
     def homogen_thm(self, prev_part):
@@ -614,10 +615,10 @@ class Intro(Slide):
 
 
         # Add Homogeneity THeorem statement
-        thm = Tex(r"Let $S$ be an open convex subset of $n$-dimensional Euclidean space", r". Let $\metric$ be a metric on $S$ that satisfies intradimensional subtractivity with respect to a continuous function $F: \mathbb{R}_{\geq 0}^n \rightarrow \mathbb{R}_{\geq 0}$. If $\langle S, \metric \rangle$ is a metric space with additive segments, then $\metric$ is homogeneous, i.e., for any $\ve{z} \in S$ and $t \in [0,1]$")
+        thm = Tex(r"Let $S$ be an open convex subset of $n$-dimensional Euclidean space", r". Let $\metric$ be a metric on $S$ that satisfies intradimensional subtractivity with respect to a continuous function $F: \mathbb{R}_{\geq 0}^n \rightarrow \mathbb{R}_{\geq 0}$. If $\langle S, \metric \rangle$ is a metric space with additive segments, then $\metric$ is homogeneous, i.e., for any \enspace", r"$\ve{x},$", r"$\ve{z}$", r"$\in S$ and $t \in [0,1]$")
         thm_0 = Tex(r"Let $S$ be an open convex subset of $n$-dimensional Euclidean space", r" with $\ve{0} \in S$",
-                  r". Let $\metric$ be a metric on $S$ that satisfies intradimensional subtractivity with respect to a continuous function $F: \mathbb{R}_{\geq 0}^n \rightarrow \mathbb{R}_{\geq 0}$. If $\langle S, \metric \rangle$ is a metric space with additive segments, then $\metric$ is homogeneous, i.e., for any $\ve{z} \in S$ and $t \in [0,1]$")
-        homo_eq = MathTex(r"\metric(",r"\ve{0},",r"t\ve{z})=t\metric(", r"\ve{0},",r"\ve{z})").next_to(thm, DOWN)
+                  r". Let $\metric$ be a metric on $S$ that satisfies intradimensional subtractivity with respect to a continuous function $F: \mathbb{R}_{\geq 0}^n \rightarrow \mathbb{R}_{\geq 0}$. If $\langle S, \metric \rangle$ is a metric space with additive segments, then $\metric$ is homogeneous, i.e., for any \enspace",  r"$\ve{z}$", r"$\in S$ and $t \in [0,1]$")
+        homo_eq = MathTex(r"\metric(",r"\ve{x},",r"t\ve{z})=t\metric(", r"\ve{x},",r"\ve{z})").next_to(thm, DOWN)
         homo_eq_0 = MathTex(r"\metric(",r"t\ve{z})=t\metric(", r"\ve{z})").move_to(homo_eq)
         thm_rect = SurroundingRectangle(VGroup(thm, homo_eq), color=d_color, buff=MED_LARGE_BUFF*0.6)
         self.play(FadeIn(VGroup(thm,thm_rect, homo_eq)), VGroup(int_subtr, intr_subtr_f, text_admod).animate.center().shift(2*UP), run_time=1)
@@ -824,10 +825,13 @@ class Intro(Slide):
 
         
         # Text: approximate with rationals
-        approx = Tex(r"$\metro{\frac km \ve{z}} = \frac km \metro{\ve{z}}$ for arbitrary large $k$ and $m$").shift(UP)
+        approx = Tex(r"$\metro{\frac km \ve{z}} = \frac km \metro{\ve{z}}$ for arbitrary large $k$ and $m$ such that $\frac km \in [0, 1]$").shift(UP)
+        self.play(Write(approx))
+        self.ns()
+
         approx2 = Tex(r"$\metric$ continuous").next_to(approx, DOWN)
-        approx3 = Tex(r"$t \in \mathbb{R}$ as limit of rational numbers").next_to(approx2, DOWN)
-        self.play(Write(VGroup(approx, approx2, approx3)))
+        approx3 = Tex(r"$t \in [0,1]$ as limit of rational numbers").next_to(approx2, DOWN)
+        self.play(Write(VGroup(approx2, approx3)))
         self.ns()
 
         # ### Proof finished
